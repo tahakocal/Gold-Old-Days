@@ -1,0 +1,214 @@
+--Select 
+Select ContactName Adi, CompanyName SirketAdi,City Sehir from Customers -- * hepsi anlamına geliyor
+
+Select * from Customers where City = 'Berlin'  -- where kosul anlamina geliyor yani city berlinse goster anlaminda
+
+Select * from Products where CategoryID=1 or CategoryID=3 -- git bana 1 numarali idye sahip kategorileri getir veya 3
+
+Select * from Products where CategoryID=1 and UnitPrice>=10 -- bana 1 numarali ve 10dan pahali urunleri listele
+
+Select * from Products order by UnitPrice desc --ascending == ARTAN, descending == Dusene gore sirala  -//- Order by sirala demek    order by product name dedigimiz de urun ismine gore siraliyacak
+
+Select * from  Products where CategoryID=1 order by CategoryID,ProductName -- ilk basta categoryleri siraladik sonra urunleri siraladik
+
+Select count(*) from Products  -- butun Productlardan kac tane var
+
+Select CategoryID,count(*) from Products where UnitPrice>20 group by CategoryID having count(*)<10  -- 10 taneden dusuk urune sahip urunleri bana ver
+
+select Products.ProductID, Products.ProductName, Products.UnitPrice , Categories.CategoryName
+from Products inner join Categories -- join birlestirmeye yariyor -- yani urunler ve kategoriler artik urunlerden islem gorebilecek
+on Products.CategoryID= Categories.CategoryID -- on durumunda sartinda demek
+
+Select * from Products p left join [Order Details] od  -- inner join sadece iki tabloda da birbirine eslesenler icin kullaniliyo
+on p.ProductID = od.ProductID -- LEFT JOIN de solda olup sagda olmayanlari da geitr demek
+
+select * from Customers c left join Orders o
+on c.CustomerID = o.CustomerID
+where o.CustomerID is null -- Daha once hic urun almamis musterileri cagirdik
+
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+-- (%) birden fazla karakteri temsil eder 
+-- (_) sembolu ise tek bir karakteri temsil eder
+--([]) sembolu gelebilecek karakteri secmemizi saglar ORN :  -- h[oa]t finds hot and hat, but not hit
+--(^) [] icerisine getirilir verilen karakterler disindaki verileri bulur ORN : -- h[^oa]t finds hit, but not hot and hat
+--(-) sadece verilen karakteri verir ORN : 	c[a-b]t finds cat and cbt
+
+--Discint = Ayni olan verileri cikarir sadece o veriden bir tane kalir
+
+--Where = Kosul anlami geliyor. ORN:
+Select * from Products where ProductName='Karpuz'
+
+--AND OR NOT = Wherein yaninda kullanilir -- Not whereden sonra kullanilir ornek:
+Select * from Customers where not City='London' or Country='UK' --London ve uk olmayanlari gsteriyor
+
+-- Order By = sırala demek ASC gelince A dan veya 1 den başlar DESC gelince Z den veya 10 dan başlar 
+
+--Insert Into = Veri eklemek icin kullaniyoruz ORN;
+Insert Into  Customers (ContactName,City,Country) values ('Karl Japlonski','London','UK')
+
+--Null = Bos olan  
+Select * from Customers where Region is null veya not null --sadece null da bos olanlari getiriyor not nullda bos olmayanlari getiriyor
+
+--Update = Mevcut verileri guncellemek icin kullanilir ORN:
+UPDATE Customers SET ContactName = 'Alfred Schmidt', City= 'Frankfurt' WHERE CustomerID = 1;
+
+--Delete= Mevcut verileri silmek icin kullanilir.ORN:
+DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';
+
+--Select Top = En ustten sec demek verdigimiz sayiya gore sectigimiz satir degisir ORN:
+SELECT TOP 3 * FROM Customers;
+
+--MIN and MAX = min en dusugu max en yuksegi verir ornek kullanim;
+Select MAX(UnitPrice)as SutunAdi from Products 
+Select MIN(UnitPrice)as TabloAdi from Products 
+
+--Count= istedigimiz seyin sayisini veriyor ORN:
+SELECT COUNT(ProductID) AS sayi FROM Products;
+
+--Avg = Ortalamayi alir ORN;
+SELECT AVG(Price) FROM Products;
+
+--Sum= Toplama islemi yapar orn 
+SELECT SUM(Quantity) FROM [Order Details];
+
+--Like = gibi demek anlamina geliyo zaten cesitli kullanimi var    -- (%) birden fazla karakteri temsil eder --  (_) sembolu ise tek bir karakteri temsil eder
+
+WHERE CustomerName LIKE 'a%' -- A ile baslayan verileri bul
+WHERE CustomerName LIKE '%a' -- A ile biten verileri bul
+WHERE CustomerName LIKE '%or%' -- OR iceren verileri bul
+WHERE CustomerName LIKE '_r%'	-- ikinci harfi R ile baslayan verileri bul
+WHERE CustomerName LIKE 'a_%'	-- A ile baslayan ama iki karakter uzunlugundaki verileri bul
+WHERE CustomerName LIKE 'a__%'	-- A ile baslayan ama uc karakter uzunlugundaki verileri bul
+WHERE ContactName LIKE 'a%o'	-- Ilk harfi A son harfi O olan verileri bul
+
+--In = Genelde whereden sonra kullanilir Ornek uzerinden anlatim ;
+SELECT * FROM Customers WHERE Country IN ('Germany', 'France', 'UK'); --Normal sartlarda county= Germany diyebiliriz ama in kullandigimizda birden fazla yazabiliyoruz
+
+--Between = Yine wheren sonra kullanilir Orn:
+SELECT * FROM Products WHERE Price BETWEEN 10 AND 20; -- fiyati 10 ve 20 arasinda olan verileri getiriyor
+
+--As = Takma ad gorevini yerine getiririyor. ORN:
+SELECT CustomerID AS ID, CustomerName AS Customer FROM Customers;
+
+--Join = iki farkli tabloyu birlestirmek icin kullanilir 
+SELECT Orders.OrderID, Customers.ContactName, Orders.OrderDate 
+FROM Orders Inner JOIN Customers
+ON Orders.CustomerID=Customers.CustomerID;
+
+--Inner Join = inner join her iki tablonun kesisim kumesi gibidir sadece iki tabloda da olan verileri secer
+SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
+FROM ((Orders
+INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
+INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID); 
+
+--Left Join = Tablodaki verileri sol tabloya aktarir 
+SELECT Customers.CustomerName, Orders.OrderID
+FROM Customers
+LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+ORDER BY Customers.CustomerName;
+
+--Right join = Leftin tam tersi
+SELECT Orders.OrderID, Employees.LastName, Employees.FirstName
+FROM Orders
+RIGHT JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+ORDER BY Orders.OrderID;
+
+--Full join = Genelde Full Outher seklinde kullanilir butun tablolari birlestirir
+SELECT Customers.CompanyName, Orders.OrderID
+FROM Customers
+FULL OUTER JOIN Orders ON Customers.CustomerID=Orders.CustomerID
+ORDER BY Customers.CompanyName;
+
+--Self Join =
+SELECT A.CompanyName AS CustomerName1, B.CompanyName AS CustomerName2, A.City
+FROM Customers A, Customers B
+WHERE A.CustomerID <> B.CustomerID
+AND A.City = B.City
+ORDER BY A.City;
+
+--Union = Ayni olan verileri birlestirmeye yariyor select ile birlikte kullanilir
+SELECT City FROM Customers
+UNION
+SELECT City FROM Suppliers
+ORDER BY City;
+
+--Group By = Toplama cikarma carpma count ogrenme islemlerinde kullaniliyoo
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country;
+
+--Having = sahip anlamina geliyor 5 ten fazla musteriye sahip ulkeleri sirala demek
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5
+ORDER BY COUNT(CustomerID) DESC;
+
+--Exists = Bool gibi calisiyor 
+SELECT SupplierName
+FROM Suppliers
+WHERE EXISTS (SELECT ProductName FROM Products WHERE Products.SupplierID = Suppliers.supplierID AND Price = 22); -- Oldugu icin true degerini verir
+
+--Any = yine bool gibi alt verilerde herhangi bir kosul saglaniyorsa True saglanmiyorsa False verir
+SELECT ProductName
+FROM Products
+WHERE ProductID = ANY
+(SELECT ProductID
+FROM [Order Details]
+WHERE Quantity = 10);
+
+--Select Into= Secilen verileri baska bir yere veya baska bir tabloya aktarmamiza yarar
+SELECT * INTO CustomersBackup2017 in 'Backup.mdb' -- bu dosyayya aktarir
+FROM Customers;
+
+SELECT Customers.CustomerName, Orders.OrderID
+INTO CustomersOrderBackup2017
+FROM Customers
+LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID;  
+
+--Insert Into Select = Kopyalama islemi yapar
+INSERT INTO Customers (CustomerName, City, Country)
+SELECT SupplierName, City, Country FROM Suppliers;
+
+--Case = Sart dondurur sart calisirsa verilen degeri gecirir sart calismazsa else de ki degeri yazar 
+SELECT OrderID, Quantity,
+CASE
+    WHEN Quantity > 30 THEN 'The quantity is greater than 30'
+    WHEN Quantity = 30 THEN 'The quantity is 30'
+    ELSE 'The quantity is under 30'
+END AS QuantityText
+FROM OrderDetails;
+
+--Ifnull = eger veri null ise verdigimiz degeri dondurur 
+SELECT ProductName, UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
+FROM Products;
+
+--Create Procedure = Class gibi daha sonradan calistirmak icin altina yaziyoruz
+CREATE PROCEDURE SelectAllCustomers
+AS
+SELECT * FROM Customers 
+GO;
+exec SelectAllCustomers
+
+
+-------------------------------------------------------
+-------------------------------------------------------
+-------------------------------------------------------
+-------------------------------------------------------
+
+
+https://www.w3schools.com/sql/sql_select_into.asp -- Bu siteyi kullan
+
+Select p.ProductName, sum(OD.Quantity*od.UnitPrice) as Total from [Order Details] OD
+inner join Products P on p.ProductID = OD.ProductID
+group by p.ProductName
+order by Total ASC
+
+

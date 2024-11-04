@@ -1,4 +1,1 @@
-# CSharpCourse
-
-
-SADECE KENDIMI DENEMEK ICIN YAPTIGIM KODLAR
+# Gold-Old-Days
